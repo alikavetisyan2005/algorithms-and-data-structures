@@ -12,7 +12,7 @@ class Node {
     }
 
     set value(val) {
-        if(!val){
+        if(typeof val !== "number"){
             throw new Error("value must be a number")
         }
         this.#value = val
@@ -23,7 +23,7 @@ class Node {
     }
 
     set next(new_node) {
-        if(new_node !== null || !(new_node instanceof Node)){
+        if(new_node !== null && !(new_node instanceof Node)){
             throw new Error("new node must be instance of Node")
         }
         this.#next = new_node;
@@ -85,11 +85,13 @@ class SinglyLinkedList {
         if(this.isEmpty()){
             this.#head = node;
         }
-        let current = this.#head;
-        while(current.next !== null){
-            current = current.next;
-        }
-        current.next = node;
+        else{
+            let current = this.#head;
+                while(current.next !== null){
+                current = current.next;
+            }
+            current.next = node;
+    }
         this.#size++;
     }
 
@@ -127,7 +129,7 @@ class SinglyLinkedList {
     /* ================= Random-like Access ================= */
 
     at(index) {
-        if(index < 0 || index > this.#size){
+        if(index < 0 || index >= this.#size){
             return undefined;
         }
         let i = 0;
@@ -185,9 +187,20 @@ class SinglyLinkedList {
         this.#size--;
 
     }
+    equals(a,b){
+        return a === b;
+    }
 
     remove(value, equals) {
-        
+        let current = this.#head
+        while(current.next){
+            if(equals(current.next,value)){
+                current.next = current.next.next;
+            }
+            else{
+                current = current.next
+            }
+        }      
         // Must remove all nodes matching value
         // If equals function exists:
         //   Use equals(a, b)
@@ -199,10 +212,15 @@ class SinglyLinkedList {
     /* ================= Algorithms ================= */
 
     reverse() {
-        // Must reverse list in-place
-        // Must not create new nodes
-        // Must update head
-        // Complexity O(n)
+        let prev = null;
+        let current = this.#head
+        while(current){
+            let next = current.next;
+            current.next = prev
+            prev = current;
+            current = next
+        }
+        this.#head = prev
     }
 
     sort(cmp) {
@@ -224,21 +242,73 @@ class SinglyLinkedList {
     /* ================= Utilities ================= */
 
     toArray() {
-        // Must traverse entire list
-        // Must return JS array of all node values
+        let res = [];
+        let current = this.#head;
+        while(current){
+            res.push(current.value);
+            current = current.next
+        }
+        return res
     }
 
     static fromArray(arr) {
-        // Must create new list from array values
-        // Must preserve order
+        const newList = new SinglyLinkedList();
+        if(arr.length === 0) return newList;
+
+        newList.#head = new Node(arr[0])
+        let current = newList.#head;
+        for(let i = 1;i < arr.length;i++){
+            current.next = new Node(arr[i]);
+            current = current.next
+        }
+        newList.#size = arr.length
+        return newList
     }
 
     /* ================= Iteration ================= */
 
     [Symbol.iterator]() {
+        let current = this.#head
+        return {
+            next: () => {
+                if(current){
+                    let value = current.value;
+                    current = current.next
+                    return {value: value, done: false}
+                }
+                else{ return {value: undefined, done: true}
+                }
+            }
+        }
         // Must allow:
         // for (let value of list)
         // Must iterate from head → tail
         // Must not modify list
     }
 }
+
+const list = new SinglyLinkedList();
+
+console.log(list.isEmpty());
+console.log(list.size() === 0);
+
+list.push_back(10);
+list.push_front(5);
+list.push_back(15);
+
+console.log(list.size() === 3);
+console.log(list.front() === 5);
+console.log(list.toArray());
+
+console.log(list.pop_front());
+console.log(list.pop_back());
+console.log(list.toArray());
+console.log(list.at(0))
+list.erase(0)
+console.log(list.toArray());
+
+let arr = [7,8,9]
+let list2 = SinglyLinkedList.fromArray(arr)
+console.log(list2.toArray())
+list2.reverse()
+console.log(list2.toArray())
