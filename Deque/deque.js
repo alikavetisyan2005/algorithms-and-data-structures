@@ -160,15 +160,28 @@ class Deque {
   }
 
   rotateLeft(k = 1) {
-
-    // Must rotate deque left by k steps
-    // Logical front shifts forward
-    // Must work with k > size
+    if(this.#size === 0) return;
+    k = k % this.#size;
+    this.reverse(this.#arr,0, k - 1);
+    this.reverse(this.#arr,k,this.#size - 1);
+    this.reverse(this.#arr,0,this.#size - 1)
   }
 
   rotateRight(k = 1) {
-    // Must rotate deque right by k steps
-    // Logical front shifts backward
+    if(this.#size === 0) return;
+    k = k % this.#size
+    this.reverse(this.#arr,0,this.#size - 1);
+    this.reverse(this.#arr,0,k - 1);
+    this.reverse(this.#arr,k,this.#size - 1)
+    
+  }
+
+  reverse(arr,start,end){
+    while(start < end){
+      [arr[start],arr[end]] = [arr[end],arr[start]];
+      start++;
+      end--;
+    }
   }
 
   swap(i, j) {
@@ -343,7 +356,30 @@ class Deque {
     }
     return acc
 
-    // Must behave like Array.reduce
-    // Must throw if empty and no initial value
   }
 }
+
+const deque = new Deque(8);
+
+// console.log(deque.empty());
+// deque.push_back(10);
+// deque.push_back(20);
+// deque.push_front(5);
+
+// console.log(deque.toArray()); 
+// console.log(deque.front());   
+// console.log(deque.back());    
+// console.log(deque.size());    
+
+deque.push_back(1);
+deque.push_back(2);
+deque.push_back(3);
+deque.push_back(4);
+
+deque.pop_front(); 
+deque.pop_front(); 
+
+deque.push_back(5);
+deque.push_back(6);
+
+console.log(deque.toArray()); 

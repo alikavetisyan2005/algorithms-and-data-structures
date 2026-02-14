@@ -224,6 +224,7 @@ class SinglyLinkedList {
     }
 
     sort(cmp) {
+        
         // Must sort list using linked-list friendly algorithm
         // Recommended: Merge Sort
         // Must reorder nodes, not values (preferred)
@@ -280,10 +281,6 @@ class SinglyLinkedList {
                 }
             }
         }
-        // Must allow:
-        // for (let value of list)
-        // Must iterate from head → tail
-        // Must not modify list
     }
 }
 
