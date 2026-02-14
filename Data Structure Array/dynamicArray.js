@@ -47,15 +47,12 @@ class DynamicArray {
         }
         this.#arr = newArr;
         this.#capacity = this.#size
-        // Must reallocate buffer so that:
-        // capacity === size
-        // Only valid elements are kept
+        
     }
 
     clear() {
         this.#size = 0;
-        // Must set size = 0
-        // Capacity must remain unchanged
+       
     }
 
     /* ================= Element Access ================= */
@@ -65,8 +62,7 @@ class DynamicArray {
             throw new Error("index not found")
         }
         return this.#arr[i];
-        // If i < 0 or i >= size → throw Error
-        // Otherwise return element at index i
+        
     }
 
     set(i, value) {
@@ -78,27 +74,20 @@ class DynamicArray {
             
         }
         this.#arr[i] = value;
-        // If index invalid → throw Error
-        // If value is not a number → throw Error
-        // Otherwise overwrite element at index i
+        
     }
 
     front() {
         return this.#arr[0];
-        // Must return first element
-        // Equivalent to at(0)
+
     }
 
     back() {
         return this.#arr[this.#size - 1];
-        // Must return last element
-        // Equivalent to at(size - 1)
+    
     }
 
     toArray() {
-        // Must return a normal JS array
-        // Must include only elements [0 ... size-1]
-        // Must NOT include unused capacity
         return this.#arr.slice(0,this.#size)
     }
 
@@ -116,11 +105,7 @@ class DynamicArray {
         }
         this.#arr[this.#size] = value;
         this.#size++;
-        // If value is not number → throw Error
-        // If size === capacity:
-        //   - grow capacity (usually capacity * 2)
-        // Append value at the end
-        // Increase size by 1
+       
     }
 
     popBack() {
@@ -131,10 +116,7 @@ class DynamicArray {
         this.#arr[this.#size - 1] = undefined;
         this.#size--;
         return removedValue
-        // If empty → throw Error
-        // Remove last element
-        // Decrease size by 1
-        // Return removed value
+        
     }
 
     insert(pos, value) {
@@ -156,11 +138,7 @@ class DynamicArray {
         this.#arr[pos] = value;
         this.#size++;
 
-        // If pos < 0 or pos > size → throw Error
-        // If buffer full → resize
-        // Shift elements right from pos
-        // Insert value at pos
-        // Increase size
+        
     }
 
     erase(pos) {
@@ -175,18 +153,10 @@ class DynamicArray {
         }
         this.#arr[this.#size - 1] = undefined;
         this.#size--;
-        // If pos invalid → throw Error
-        // Shift elements left from pos
-        // Decrease size
+        
     }
 
-    #resize(n) {
-
-        // Must allocate new buffer of size n
-        // Copy min(size, n) elements
-        // If n < size → truncate size
-        // Update capacity
-    }
+    
 
     swap(i, j) {
         if(i < 0 || i >= this.#size || j < 0 || j >= this.#size){
@@ -195,8 +165,7 @@ class DynamicArray {
         let tmp = this.#arr[i];
         this.#arr[i] = this.#arr[j];
         this.#arr[j] = tmp;
-        // If any index invalid → throw Error
-        // Swap values at indices i and j
+        
     }
 
     /* ================= Iteration ================= */
@@ -213,15 +182,12 @@ class DynamicArray {
                 return {done: true}
             }
         }
-        // Must allow:
-        // for (let x of arr)
-        // Should iterate from index 0 to size-1
+        
     }
 
     values() {
         return this[Symbol.iterator]();
-        // Must return iterator over values
-        // Same behavior as Symbol.iterator
+        
     }
 
     keys() {
@@ -235,8 +201,7 @@ class DynamicArray {
                 return {done: true}
             }
         }
-        // Must return iterator over indices
-        // Values: 0, 1, 2, ... size-1
+        
     }
 
     entries() {
@@ -251,24 +216,20 @@ class DynamicArray {
                 return {done: true}
             }
         }
-        // Must return iterator over [index, value] pairs
-        // Example: [0, 10], [1, 20], ...
+        
     }
 
     /* ================= High Order ================= */
 
     forEach(fn) {
-        // Must call fn(value, index, thisArray)
-        // For each element from 0 to size-1
-        // Must not modify the array
+       
         for(let i = 0;i < this.#size;i++){
             fn(this.#arr[i],i,this);
         }
     }
 
     map(fn) {
-        // Must return new DynamicArray
-        // Each element = fn(oldValue, index, thisArray)
+        
         const result = new DynamicArray();
         for(let i = 0;i < this.#size;i++){
             result.push(fn(this.#arr[i],i,this));
@@ -284,8 +245,7 @@ class DynamicArray {
             }
         }
         return result;
-        // Must return new DynamicArray
-        // Only elements where fn(...) === true
+
     }
 
     reduce(fn, initial) {
@@ -310,12 +270,6 @@ class DynamicArray {
         }
 
     return acc;
-        // If empty and initial undefined → throw Error
-        // If initial exists:
-        //   acc = initial, start from index 0
-        // Else:
-        //   acc = first element, start from index 1
-        // Must return accumulated value
     }
 
     some(fn) {
@@ -325,8 +279,6 @@ class DynamicArray {
             }
         }
         return  false
-        // Must return true if any element satisfies fn
-        // Otherwise false
     }
 
     every(fn) {
@@ -336,7 +288,6 @@ class DynamicArray {
             }
         }
         return true
-        // Must return true only if all elements satisfy fn
     }
 
     find(fn) {
@@ -346,8 +297,6 @@ class DynamicArray {
             }
         }
         return undefined
-        // Must return first value where fn(...) === true
-        // If not found → return undefined
     }
 
     findIndex(fn) {
@@ -357,8 +306,6 @@ class DynamicArray {
             }
         }
         return -1
-        // Must return index of first match
-        // If not found → return -1
     }
 
     includes(value) {
@@ -368,8 +315,7 @@ class DynamicArray {
             }
         }
         return false;
-        // Must return true if value exists in array
-        // Otherwise false
+        
     }
 
     /* ================= Extensions ================= */
@@ -382,8 +328,7 @@ class DynamicArray {
             i++;
             j--;
         }
-        // Must reverse elements in-place
-        // No extra array allowed
+        
     }
 
     sort(compareFn) {
@@ -394,9 +339,7 @@ class DynamicArray {
                 }
             }
         }
-        // Must sort array in-place
-        // Must NOT use built-in Array.sort
-        // You must implement your own algorithm
+        
     }
 
     clone() {
@@ -405,7 +348,7 @@ class DynamicArray {
             copy.#arr[i] = this.#arr[i];
         }
         return copy
-        // Must return deep copy of this DynamicArray
+
     }
 
     equals(other) {
@@ -421,7 +364,6 @@ class DynamicArray {
             }
         }
         return true
-        // Must return true if:
-        // same size AND all elements equal
+    
     }
 }
