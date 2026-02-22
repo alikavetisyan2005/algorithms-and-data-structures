@@ -367,3 +367,5 @@ class DynamicArray {
     
     }
 }
+
+export default DynamicArray;
