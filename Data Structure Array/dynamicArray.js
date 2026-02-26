@@ -94,9 +94,9 @@ class DynamicArray {
     /* ================= Modifiers ================= */
 
     pushBack(value) {
-        if(typeof value !== "number"){
-            throw new Error("Value must be a number")
-        }
+        // if(typeof value !== "number"){
+        //     throw new Error("Value must be a number")
+        // }
         if(this.#capacity === 0){
             this.reserve(1);
         }

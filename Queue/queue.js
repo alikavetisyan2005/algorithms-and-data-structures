@@ -93,15 +93,16 @@ class Queue {
 
 }
 
-const qu = new Queue(8);
-console.log(qu.enqueue(10));
-console.log(qu.enqueue(20));
-console.log(qu.enqueue(40));
-console.log(qu.enqueue(30));
-console.log(qu.dequeue());
-console.log(qu.dequeue());
-console.log(qu.peek())
-console.log(qu.back())
-console.log(qu.print())
+// const qu = new Queue(8);
+// console.log(qu.enqueue(10));
+// console.log(qu.enqueue(20));
+// console.log(qu.enqueue(40));
+// console.log(qu.enqueue(30));
+// console.log(qu.dequeue());
+// console.log(qu.dequeue());
+// console.log(qu.peek())
+// console.log(qu.back())
+// console.log(qu.print())
 
+export default Queue;
 

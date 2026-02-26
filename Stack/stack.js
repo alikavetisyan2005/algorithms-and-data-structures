@@ -64,14 +64,5 @@ class Stack {
     
 }
 
-const stack = new Stack(8);
-console.log(stack.capacity());
-console.log(stack.is_empty())
-console.log(stack.is_full())
-console.log(stack.push(12))
-console.log(stack.push(10))
-console.log(stack.push(111))
-console.log(stack.push(123))
-console.log(stack.peek())
 
-
+export default Stack;
