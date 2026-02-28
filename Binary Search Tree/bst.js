@@ -71,14 +71,7 @@ class BST {
     }
 
     delete(value) {
-
-        // Must remove node with given value if exists
-        // Must preserve BST structure
-        // Must correctly handle 3 cases:
-        //   1) Leaf node
-        //   2) Node with one child
-        //   3) Node with two children
-        // Must decrease size if node removed
+        return this.#_delete(this.#root,value)
     }
 
     contains(value) {
@@ -101,11 +94,9 @@ class BST {
 
     get_height() {
         return this.#_get_height(this.#root)
-        
     }
 
     get_depth(value) {
-        
         // Must return distance from root to node
         // Root depth = 0
         // If value not found → return -1
@@ -230,18 +221,38 @@ class BST {
     /* ================= Advanced Operations ================= */
 
     find_successor(value) {
+        let successor = null;
+        let node = this.#root;
+        while(node){
+            if(value < node.value){
+                successor = node.value;
+                node = node.left;
+            }
+            else{
+                node = node.right
+            }
         
-        // Must return inorder successor of node
-        // Smallest value greater than given value
-        // If none → return null
+        }
+        return successor;
     }
 
     find_predecessor(value) {
-        // Must return inorder predecessor of node
-        // Largest value smaller than given value
+        let predecessor = null;
+        let node = this.#root;
+        while(node){
+            if(value > node.value){
+                predecessor = node.value;
+                node = node.right;
+            }
+            else{
+                node = node.left;
+            }
+        }
+        return predecessor
     }
 
     is_balanced(node) {
+        
         // Must return true if tree is height-balanced
         // |height(left) - height(right)| <= 1 for all nodes
     }
@@ -268,14 +279,18 @@ class BST {
             current = current.right;
         }
         return res
-        // Must return sorted array of values
-        // Should use inorder traversal
     }
 
     clone() {
-
-        // Must return deep copy of entire tree
-        // New tree must not share nodes
+        let deepCopy = new BST()
+        function copy(node){
+            if(!node) return;
+            deepCopy.insert(node.value);
+            copy(node.left)
+            copy(node.right);
+        }
+        copy(this.#root);
+        return deepCopy
     }
 
     equals(otherTree) {
@@ -312,9 +327,22 @@ class BST {
     }
 
     #_delete(node, value) {
-
-        // Recursive deletion helper
-        // Must return updated subtree root
+        if(!node) return null;
+        if(value < node.value){
+            node.left = this.#_delete(node.left,value);
+        }
+        else if(value > node.value){
+            node.right = this.#_delete(node.right,value);
+        }
+        else{
+            if(!node.right || !node.left){
+                return node.right || node.left;
+            }
+            const newRoot = this.#_find_min(node.right);
+            node.value = newRoot;
+            node.right = this.#_delete(node.right,newRoot);
+        }
+        return node
     }
 
     #_find_min(node) {
@@ -325,7 +353,6 @@ class BST {
     #_find_max(node) {
         if(!node.right) return node.value;
         return this.#_find_max(node.right)
-        // Must return maximum value in subtree
     }
 
     #_get_height(node) {
@@ -376,5 +403,9 @@ bst.insert(23);
 
 
 console.log(bst.size())
-console.log(bst.contains(11))
+// console.log(bst.contains(11))
 console.log(bst.preorder_itr())
+
+bst.delete(10);
+
+console.log(bst.inorder_itr())
