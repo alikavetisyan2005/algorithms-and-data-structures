@@ -224,7 +224,6 @@ class SinglyLinkedList {
     }
 
     sort(cmp) {
-        
         // Must sort list using linked-list friendly algorithm
         // Recommended: Merge Sort
         // Must reorder nodes, not values (preferred)

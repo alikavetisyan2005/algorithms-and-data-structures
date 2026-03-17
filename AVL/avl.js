@@ -235,6 +235,7 @@ class AVL {
     }
 
     #reBalance(node) {
+        
         // Must compute balance factor
         // Must perform rotations when needed:
         //   LL → rotateRight

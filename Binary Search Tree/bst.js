@@ -97,12 +97,38 @@ class BST {
     }
 
     get_depth(value) {
-        // Must return distance from root to node
-        // Root depth = 0
-        // If value not found → return -1
+        if(!this.#root) return;
+        // if(this.#root.value === value) return 0;
+        let current = this.#root;
+        let depth = 0;
+        while(current){
+            if(value === current.value){
+                depth++;
+                return depth;
+            }
+            else if(value < current.value){
+                current = current.left
+            }
+            else{
+                current = current.right;
+            }
+
+            depth++;
+        }
+
+        return -1
     }
 
-    #get_depth_rec(value){  
+    #get_depth_rec(node,value,depth = 0){  
+        if(!node) return -1;
+        if(node.value === value) return depth;
+        
+        if(value < node.value){
+            this.#get_depth_rec(node.left,value,depth + 1)
+        }
+        else if(value > node.value){
+            this.#get_depth_rec(node.left,value,depth + 1)
+        }
     }
 
     /* ================= Min / Max ================= */
@@ -214,8 +240,6 @@ class BST {
 
         return output;
 
-        // Iterative postorder traversal
-        // May use two stacks
     }
 
     /* ================= Advanced Operations ================= */
@@ -252,7 +276,7 @@ class BST {
     }
 
     is_balanced(node) {
-        
+        return Math.abs(this.#_get_height(node.left) - this.get_height(node.right)) <= 1
         // Must return true if tree is height-balanced
         // |height(left) - height(right)| <= 1 for all nodes
     }
@@ -298,20 +322,6 @@ class BST {
         // Must return true if trees have identical structure AND values
     }
 
-    /* ================= Iteration ================= */
-
-    [Symbol.iterator]() {
-        // Must iterate tree in inorder (sorted order)
-        // Must not modify tree
-    }
-
-    values() {
-        // Must return iterator of values (inorder)
-    }
-
-    entries() {
-        // Must return iterator of [index, value] in sorted order
-    }
 
     /* ================= Private Helpers ================= */
 
