@@ -1,16 +1,16 @@
-import DynamicArray from "../Data Structure Array/dynamicArray.js"
 class Deque {
   #arr;
   #front;
   #size;
+  #capacity;
 
   constructor(capacity = 8) {
     if(capacity <= 2) throw new Error("capacity must be at least 2");
-    if(!Number.isInteger(capacity)) throw new Error("capacity must be integer");
-    this.#arr = new DynamicArray(capacity);
-    this.#front = 0;
+    
+    this.#capacity = capacity;
     this.#size = 0;
-
+    this.#front = 0;
+    this.#arr = new Array(capacity);
     // Must allocate internal circular buffer of given capacity
     // Capacity must be >= 2, otherwise throw Error
     // Must initialize:
@@ -22,37 +22,36 @@ class Deque {
   /* ================= Basic State ================= */
 
   size() {
-    return this.#size;
+    return this.#size
     // Must return number of stored elements
   }
 
   capacity() {
-    return this.#arr.capacity;
+    return this.#capacity
     // Must return internal buffer capacity
   }
 
   empty() {
-    return this.#size === 0
+    return this.#size === 0;
     // Must return true if size === 0
   }
 
   full() {
-    return this.capacity() === this.#size
+    return this.#size === this.#capacity;
     // Must return true if size === capacity
   }
 
   /* ================= Internal Helpers ================= */
 
   #mod(i) {
-    let cap = this.capacity();
-    return ((i + cap) % cap) % cap;
+    return (i % this.#capacity + this.#capacity) % this.#capacity
     // Must convert index to circular buffer index
     // Must correctly handle negative indices
     // Result must be in range [0, capacity-1]
   }
 
   #index(i) {
-    return this.#mod(this.#front + i)
+    return this.#mod(this.#front + i);
     // Must convert logical index → physical index
     // Logical index:
     //   0 = front element
@@ -60,15 +59,17 @@ class Deque {
   }
 
   #ensureCapacityForOneMore() {
-    if(this.#size < this.capacity) return;
-    if(this.#size === this.capacity) {
-        let newBuffer = new DynamicArray(this.capacity * 2);
-        for(let i = 0;i < this.#size;i++){
-            newBuffer[i] = this.#arr[this.#index(i)];
-        }
-    }
-    this.#arr = newBuffer;
-    this.#front = 0;
+    if(this.#size < this.#capacity)  return;
+
+      let newArr = new Array(this.#capacity * 2);
+      for(let i = 0;i < this.#size;i++){
+        newArr[i] = this.#arr[this.#index(i)];
+      }
+      this.#arr = newArr;
+      this.#front = 0;
+      this.#capacity *= 2
+      return;
+    
     // If size < capacity → do nothing
     // If size === capacity:
     //   Allocate new buffer with capacity * 2
@@ -79,22 +80,25 @@ class Deque {
   /* ================= Element Access ================= */
 
   front() {
-    if(this.empty()) throw new Error("array is empty");
+    if(this.empty()) throw new Error("error");
+    
     return this.#arr[this.#front];
     // If empty → throw Error
     // Must return first element
   }
 
   back() {
+    if(this.empty()) throw new Error("error");
+    
     return this.#arr[this.#index(this.#size - 1)]
     // If empty → throw Error
     // Must return last element
   }
 
-
   at(i) {
-    if(i < 0 || i >= this.#size) throw new Error("invalid index")
-    return this.#arr[this.#index(i)];
+    if(i < 0 || i >= this.#size) throw new Error("");
+    
+    return this.#arr[this.#index(i)]
     // If i invalid → throw Error
     // Must return element at logical index i
   }
@@ -103,18 +107,22 @@ class Deque {
 
   push_back(value) {
     this.#ensureCapacityForOneMore();
-    let idx = this.#index(this.#size);
-    this.#arr[idx] = value;
+    const idx = this.#index(this.#size);
 
-    this.#size++;
-    // Must ensure capacity [null,2,null,4,5]
-     // Must insert value after last element
+    this.#arr[idx] = value;
+    this.#size++
+    
+
+    // Must ensure capacity
+    // Must insert value after last element
     // Must increase size
   }
 
   push_front(value) {
     this.#ensureCapacityForOneMore();
+
     this.#front = this.#mod(this.#front - 1)
+
     this.#arr[this.#front] = value;
     this.#size++;
     // Must ensure capacity
@@ -124,10 +132,11 @@ class Deque {
   }
 
   pop_front() {
-    if(this.empty()) throw new Error("array is empty");
+    if(this.empty()) throw new Error("error");
+
     const value = this.#arr[this.#front];
-    this.#arr[this.#front] = null;
-    this.#front = this.#mod(this.#front + 1)
+
+    this.#front = this.#mod(this.#front + 1);
     this.#size--;
     return value;
     // If empty → throw Error
@@ -138,11 +147,12 @@ class Deque {
   }
 
   pop_back() {
-    if(this.empty()) throw new Error("array is empty");
-    const idx = this.#index(this.#size - 1);
+    if(this.empty()) throw new Error("error");
+    
+    let idx = this.#index(this.#size - 1);
     const value = this.#arr[idx];
-    this.#arr[idx] = null;
     this.#size--
+
     return value;
     // If empty → throw Error
     // Must remove last element
@@ -151,8 +161,10 @@ class Deque {
   }
 
   clear() {
+    this.#arr = new Array(this.#capacity);
+
+    this.#front = 0;
     this.#size = 0;
-    this.#front = 0
     // Must reset deque to empty state
     // Must keep current capacity
     // Must reset front to 0
@@ -162,14 +174,7 @@ class Deque {
   /* ================= Extended Professional Methods ================= */
 
   reserve(newCapacity) {
-    if(newCapacity <= this.capacity) return;
-    let newBuffer = new DynamicArray(newCapacity);
-    for(let i = 0;i < this.#size;i++){
-        newBuffer[i] = this.#arr[this.#index(i)];
-    }
-
-    this.#arr = newBuffer;
-    this.#front = 0;
+    
     // If newCapacity <= current capacity → do nothing
     // Else:
     //   Allocate new buffer
@@ -178,19 +183,9 @@ class Deque {
   }
 
   shrinkToFit() {
-    // if(this.#size === this.#cap){
-    //     return;
-    // }
-    // const newBuffer = new Array(this.#size);
-    // for(let i = 0;i < this.#size;i++){
-    //     newBuffer[i] = this.#arr[this.#index(i)];
-    // }
-    // this.#arr = newBuffer;
-    // // this.capa = this.#size;
-    // this.#front = 0
-    // // Must reduce capacity to size
-    // // Must reallocate buffer
-    // // Must preserve order
+    // Must reduce capacity to size
+    // Must reallocate buffer
+    // Must preserve order
   }
 
   rotateLeft(k = 1) {
@@ -205,94 +200,8 @@ class Deque {
   }
 
   swap(i, j) {
-    if(i < 0 || i >= this.#size) throw new Error("i is invalid");
-    if(j < 0 || j >= this.#size) throw new Error("j is invallid");
-    [this.#arr[this.#index(i)],this.#arr[this.#index(j)]] = [this.#arr[this.#index(j)],this.#arr[this.#index(i)]]
     // If indices invalid → throw Error
     // Must swap logical elements
   }
 
-  /* ================= Search & Utilities ================= */
-
-  find(value) {
-    for(let i = 0;i < this.#size;i++){
-        if(this.#arr[this.#index(i)] === value){
-            return this.#index(i);
-        }
-    }
-    return -1
-    // Must return first logical index of value
-    // If not found → return -1
-  }
-
-  includes(value) {
-    for(let i = 0;i < this.#size;i++){
-        if(this.#arr[this.#index(i)] === value){
-            return true
-        }
-    }
-    return false;
-    // Must return true if value exists
-    // Otherwise false
-  }
-
-  toArray() {
-    let res = [];
-    for(let i = 0;i < this.#size;i++){
-        res.push(this.#arr[this.#index(i)])
-    }
-
-    return res;
-    // Must return normal JS array
-    // Must preserve logical order
-  }
-
-  clone() {
-    // Must return deep copy of deque
-    // New instance must not share buffer
-  }
-
-  equals(otherDeque) {
-    // Must return true if:
-    // same size AND same logical values
-  }
-
-  /* ================= Iteration ================= */
-
-  [Symbol.iterator]() {
-
-    // Must iterate from front → back
-    // Must not expose internal buffer layout
-  }
-
-  values() {
-    // Must return value iterator
-  }
-
-  keys() {
-    // Must return iterator of logical indices 0 → size-1
-  }
-
-  entries() {
-    // Must return iterator of [index, value]
-  }
-
-  /* ================= Functional Style ================= */
-
-  forEach(fn) {
-    // Must call fn(value, index, thisDeque)
-  }
-
-  map(fn) {
-    // Must return new deque with mapped values
-  }
-
-  filter(fn) {
-    // Must return new deque with filtered values
-  }
-
-  reduce(fn, initial) {
-    // Must behave like Array.reduce
-    // Must throw if empty and no initial value
-  }
 }
